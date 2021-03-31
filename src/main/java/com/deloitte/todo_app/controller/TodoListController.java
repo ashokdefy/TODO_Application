@@ -40,7 +40,8 @@ public class TodoListController {
     public String postAdd(@ModelAttribute("task") TodoList list,
                           Principal principal, BindingResult bindingResult){
         list.setDate(new Date());
-        list.setUser(userService.findByUsername(principal.getName()));
+        if(list.getUser()==null)
+            list.setUser(userService.findByUsername(principal.getName()));
         todoListValidation.validate(list, bindingResult);
         if(bindingResult.hasErrors()) {
             if(list.getId()==null)
@@ -49,6 +50,11 @@ public class TodoListController {
                 log.info("Task is not Updated for user: "+ principal.getName() +" due to Error on validation : \n" + bindingResult.toString());
             return "add-new";
         }
+        if(!list.getUser().getUsername().equals(principal.getName())) {
+            log.error("404 error sent for the wrong task update request by " + principal.getName());
+            return "error/404";
+        }
+
         if(list.getId()==null)
             log.info("New task has been added successfully by user: "+ principal.getName());
         else
@@ -61,18 +67,18 @@ public class TodoListController {
                             @RequestParam("task_id") Long toDoListId){
         log.trace("GET request received for Task UPDATE by user" + principal.getName());
         TodoList toDoList = todoListService.findById(toDoListId);
-        if(toDoList == null) {
-            log.error("404 error sent for the wrong task update request by " + principal.getName());
-            return "error/404";
+        if(toDoList != null && toDoList.getUser().getUsername().equals(principal.getName())) {
+            model.addAttribute("task", toDoList);
+            return "add-new";
         }
-        model.addAttribute("task", toDoList);
-        return "add-new";
+        log.error("404 error sent for the wrong task update request by " + principal.getName());
+        return "error/404";
     }
 
     @RequestMapping(value = "/check", method = RequestMethod.GET)
     public String updateCheck(@ModelAttribute("task_id") Long toDoListId, Principal principal){
         TodoList toDoList = todoListService.findById(toDoListId);
-        if(toDoList != null) {
+        if(toDoList != null && toDoList.getUser().getUsername().equals(principal.getName())) {
             toDoList.setCheckBox(! toDoList.isCheckBox());
             todoListService.save(toDoList);
             log.info("task "+ toDoList.getId() +" was checked "+ toDoList.isCheckBox() +" successfully by user: "+ toDoList.getUser().getUsername());
@@ -84,7 +90,7 @@ public class TodoListController {
     @RequestMapping(value="/delete" , method = RequestMethod.GET)
     public String deleteTask(@ModelAttribute("task_id") Long toDoListId, Principal principal) {
         TodoList todoDelete = todoListService.findById(toDoListId);
-        if (todoDelete != null) {
+        if (todoDelete != null && todoDelete.getUser().getUsername().equals(principal.getName())) {
             todoListService.delete(todoDelete);
             log.info("task " + todoDelete.getId() + " was deleted successfully by user: " + todoDelete.getUser().getUsername());
             return "redirect:/";
