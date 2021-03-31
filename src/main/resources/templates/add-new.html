@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: header-css">
+</head>
+
+<body>
+<div th:replace="header :: header"></div>
+<div class="container">
+    <br><br>
+    <h3>
+        <div>
+            <h2 th:if="${task.getId()==null}" th:text="'Add New Task'"></h2>
+            <h2 th:if="${task.getId()!=null}" th:text="'Edit Current Task'"></h2><br><br>
+
+            <form class="form-signin" autocomplete="off" th:action="@{/list/add}" th:object="${task}" method="POST">
+                <table class="table table-hover">
+                    <tr>
+                        <td> <h3 th:text="'Task Name'"></h3></td>
+                        <td><input type="text" th:field="*{header}" class="form-control input-lg" title="task" required />
+                            <div class="alert alert-danger error-alert" th:if="${#fields.hasErrors('header')}" th:errors="*{header}"/></td>
+                    </tr>
+                    <tr >
+                        <td> <h3 th:text="'Description'"></h3></td>
+                        <td>
+                        <textarea rows="5" th:field="*{description}" class="form-control input-lg" title="description"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a th:href="@{/}" class="btn btn-outline-dark" type="text" th:text="'Cancel'"></a></td>
+                        <td><input class="btn btn-outline-dark" type="submit" th:value="'Submit'" /></td>
+                    </tr>
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="hidden" th:field="*{checkBox}"/>
+                </table>
+            </form>
+        </div>
+    </h3>
+</div>
+</body>
+
+</html>

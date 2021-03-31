@@ -1,0 +1,47 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: header-css">
+</head>
+
+<body>
+
+<div th:replace="header :: header"></div>
+<div class="container">
+    <br><br>
+    <h3>
+
+        <div th:style="centre" th:text = "'Welcome '+${user.name} + '... Here is your Task List'"> Welcome Name</div>
+        <br><br>
+        <div>
+            <table class="table table-hover" style="text-align: center">
+                <tr>
+                    <th> </th>
+                    <th>Task</th>
+                    <th>Updated Date</th>
+                    <th>Description</th>
+                    <th>Edit Item</th>
+                    <th>Delete</th>
+
+                </tr>
+                <tr th:if="${list.isEmpty()}">
+                    <td colspan="6"> No tasks Available </td>
+                </tr>
+                <tr th:each="task : ${list} ">
+                    <td><input class="form-check-input custom-control custom-checkbox checkbox-lg"
+                               type="checkbox" th:checked="${task.checkBox}" title="active"
+                               th:onclick="|window.location.href='/list/check?task_id=${task.id}'|"></td>
+                    <td><span th:text="${task.header}"> Task </span></td>
+                    <td><span th:text="${#dates.format(task.date, 'dd-MMM-yyyy HH:mm:ss')}"> Updated Date </span></td>
+                    <td><span th:text="${task.description}"> Description </span></td>
+                    <td><a th:href="@{|/list/update?task_id=${task.id}|}"
+                           style='font-size:20px;color: black' class='far' >&#xf044;</a> </td>
+                    <td><a th:href="@{|/list/delete?task_id=${task.id}|}"
+                           style='font-size:20px;color: black' class='far' ><i class="fa fa-trash" aria-hidden="true"></i></a> </td>
+                </tr>
+            </table>
+        </div>
+    </h3>
+</div>
+</body>
+
+</html>
