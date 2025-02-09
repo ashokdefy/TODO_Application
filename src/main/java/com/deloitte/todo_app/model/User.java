@@ -1,9 +1,8 @@
 package com.deloitte.todo_app.model;
 
-import com.sun.istack.NotNull;
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -17,11 +16,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @Column
     private String username;
 
-    @NotNull
     @Column
     private String password;
 

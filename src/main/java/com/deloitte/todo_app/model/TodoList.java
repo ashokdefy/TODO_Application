@@ -2,7 +2,7 @@ package com.deloitte.todo_app.model;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
